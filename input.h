@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <math.h>
-
 void takeInput(int size, int **matrix) {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -38,8 +36,8 @@ int** cofactor(int size, int **matrix, int target) {
         };
     };
 
-    for (int i = 0; i < size; i++) {
-        cofactorMatrix[i] = data + i*size;
+    for (int i = 0; i < size - 1; i++) {
+        cofactorMatrix[i] = data + i*(size - 1);
     };
 
     return cofactorMatrix;
@@ -50,23 +48,27 @@ void freeMatrix(int **matrix) {
     free(matrix);
 };
 
-int determinant(int size, int **matrix) {
-    int overallValue = 0;
-    int *reference = matrix[0];
-    int **firstCofactor = cofactor(size, matrix, 0);
-    int **secondCofactor = cofactor(size, matrix, 1);
-    int **thirdCofactor = cofactor(size, matrix, 2);
+int resolveMatrix(int **matrix) {
+    return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0];
+};
 
-    printMatrix(size - 1, firstCofactor);
-    printf("\n");
-    printMatrix(size - 1, secondCofactor);
-    printf("\n");
-    printMatrix(size - 1, thirdCofactor);
-    printf("\n");
-
-    freeMatrix(firstCofactor);
-    freeMatrix(secondCofactor);
-    freeMatrix(thirdCofactor);
+long long int determinant(int size, int **matrix) {
+    long long int overallValue = 0;
+    
+    if (size == 2) {
+        return resolveMatrix(matrix);
+    }
+    else {
+        int *reference = matrix[0];
+        for (int i = 0; i < size; i++) {
+            int sign = -1;
+            if (i%2 == 0) sign = 1;
+            int **cofactorMatrix = cofactor(size, matrix, i);
+            int value = determinant(size - 1, cofactorMatrix);
+            overallValue += value*reference[i]*sign;
+            freeMatrix(cofactorMatrix);
+        };
+    };
 
     return overallValue;
 };

@@ -14,7 +14,7 @@ int main() {
     takeInput(size, matrix);
     printMatrix(size, matrix);
 
-    determinant(size, matrix);
+    printf("%ll\n", determinant(size, matrix));
 
     return 0;
 };
